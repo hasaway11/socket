@@ -1,23 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Memo from "./pages/Memo";
+import useWebSocketStore from "./stores/useWebSocketStore";
+import { useEffect } from "react";
+import useWebSocket2 from "./hooks/useWebSocket2";
 
 function App() {
+  const clientRef = useWebSocket2();
+  const setClient = useWebSocketStore(state=>state.setClient);
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/memo" element={<Memo />} />
+      </Routes>
     </div>
   );
 }
