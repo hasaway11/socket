@@ -31,7 +31,6 @@ const useWebSocket2 = () => {
   },[]);
 
   return clientRef;
-
 };
 
 export default useWebSocket2;
