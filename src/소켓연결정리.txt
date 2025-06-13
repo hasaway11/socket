@@ -1,0 +1,75 @@
+※ 구독 주소와 핸들러를 전달받아 STOMP 객체를 리턴하는 커스텀 훅
+function useWS(subUrl, handler) {
+  const socket = useRef(null);
+
+  useEffect(()=>{
+    const client = new Client({
+      reconnectDelay: 5000,
+      webSocketFactory:()=>new SockJS("http://localhost:8080/ws"),
+      onConnect:()=>{
+        console.log("웹 소켓 연결");
+        client.subscribe(subUrl, message=>handler(message));
+      }
+    });
+    client.activate();
+    socket.current = client;
+  });
+
+  return socket;
+}
+
+- 문제점 : 각 컴포넌트들이 구독하는 주소, 핸들러가 다른 경우에 대처가 안됨
+
+
+※ 구독주소와 핸들러를 외부로 분리시킨 커스텀 훅
+function useWS2() {
+  const socket = useRef(null);
+
+  useEffect(()=>{
+    if (socket.current) return; 
+
+    const client = new Client({
+      reconnectDelay: 5000,
+      webSocketFactory:()=>new SockJS("http://localhost:8080/ws"),
+      onConnect:()=>{
+        console.log("웹 소켓 연결");
+      }
+    });
+    console.log(client);
+    client.activate();
+    socket.current = client;
+  }, []);
+
+  return socket;
+}
+- 왜 useEffect를 사용하는가?
+  커스텀훅은 상태와 상태 관련 함수를 컴포넌트에서 분리시킨 것(상태 관리 로직의 재사용 목적)
+  컴포넌트에서 사이드 이펙트가 useEffect로 처리되는 것 처럼 커스텀 훅의 부수효과도 마찬가지
+
+
+※ 커스텀훅을 이용해 socket을 store에 저장하는 코드 → 동작하지 않는다
+function App() {
+  const socket = useWS2();
+  // 초기 렌더링 시점엔 useEffect가 아직 실행되지 않아서 socket.current가 null
+
+  console.log('socket', socket);
+
+  const setSocket = useWebSocketStore(state=>state.setSocket);
+  setSocket(socket);
+
+  return (
+    <Routes>
+      <Route path="/test1" element={<Test1 />} />
+    </Routes>
+  );
+}
+
+
+
+
+
+
+
+
+ WebSocket뿐 아니라, Firebase, IndexedDB, WebRTC 등도 마찬가지
+비동기 초기화가 필요한 리소스는 "준비 완료" 시점에 콜백이나 전역 상태로 처리

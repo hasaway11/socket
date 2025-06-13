@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 const useWebSocketStore = create((set) => ({
-  client: null,
-  setClient: (newClient) => set({ client: newClient }),
+  socket: null,
+  setSocket: (newSocket) => set({ socket: newSocket }),
 }));
 
 export default useWebSocketStore;
