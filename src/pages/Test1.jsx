@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import useWebSocketStore from '../stores/useWebSocketStore';
 import { Link } from 'react-router-dom';
 
 function Test1() {

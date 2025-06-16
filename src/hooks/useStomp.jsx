@@ -3,7 +3,7 @@ import useWebSocketStore from '../stores/useWebSocketStore';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-function useWS3() {
+function useStomp() {
   const setSocket = useWebSocketStore(state=>state.setSocket);
 
   useEffect(()=>{
@@ -19,4 +19,4 @@ function useWS3() {
   }, []);
 }
 
-export default useWS3
+export default useStomp;
